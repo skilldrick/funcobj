@@ -25,7 +25,7 @@ function log() {
 
 
 
-
+//This is a dot operator and object free zone:
 
 function animalMethods(type) {
   return function (methodName) {
@@ -122,3 +122,4 @@ log(yapper('bark')());
 log(yapper('type')());
 log(fido('sayHello')('Dave'));
 log(fido('typeAndName')());
+log(yapper('typeAndName')());
