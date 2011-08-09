@@ -6,6 +6,10 @@ function apply(method, args) {
   return method.apply(null, args);
 }
 
+function push(array, arg) {
+  return array.push(arg);
+}
+
 function log() {
   var args = Array.prototype.slice.call(arguments);
   console.log(args);
@@ -48,25 +52,26 @@ var yMethods = (function () {
   };
 })();
 
-function objMaker(methods) {
+function objMaker(methods, superObject) {
+  var allMethods = [];
   return function (methodName) {
     var args = callSlice(arguments, 1);
     var method = methods(methodName);
     if (method) {
       return apply(method, args);
     }
-    else {
-      log("Method", methodName, "not known");
+    if (superObject) {
+      return apply(superObject, arguments);
     }
+    log("Method", methodName, "not known");
   };
 }
 
 xObj = objMaker(xMethods);
-xObj('x=', 100);
-var x = xObj('x');
-log(x);
-
 yObj = objMaker(yMethods);
-yObj('y=', 50);
-var y = yObj('y');
-log(y);
+
+xAndYObj = objMaker(xMethods, yObj);
+xAndYObj('x=', 25);
+xAndYObj('y=', 30);
+log(xAndYObj('x'));
+log(xAndYObj('y'));
