@@ -8,6 +8,11 @@ function apply(method, args) {
   return method.apply(null, args);
 }
 
+function applyWithSelf(method, self, args) {
+  args.unshift(self); //make self first argument
+  return apply(method, args);
+}
+
 function push(array, arg) {
   return array.push(arg);
 }
@@ -36,8 +41,8 @@ function dogMethods(name) {
   return function (methodName) {
     switch (methodName) {
     case 'bark':
-      return function () {
-        return 'WOOF WOOF';
+      return function (self) {
+        return self('name') + ' and I say WOOF WOOF';
       };
     case 'name':
       return function () {
@@ -51,8 +56,8 @@ function yappyDogMethods() {
   return function (methodName) {
     switch (methodName) {
     case 'bark':
-      return function () {
-        return 'yip yip yip!';
+      return function (self) {
+        return self('name') + ' and I say yip yip yip!';
       };
     }
   };
@@ -66,17 +71,18 @@ function yappyDogMethods() {
 function objMaker(methodsInitializer, initArgs, superObject) {
   var methods = apply(methodsInitializer, initArgs);
 
-  return function (methodName) {
+  function dispatch(methodName) {
     var args = callSlice(arguments, 1);
     var method = methods(methodName);
     if (method) {
-      return apply(method, args);
+      return applyWithSelf(method, dispatch, args);
     }
     if (superObject) {
       return apply(superObject, arguments);
     }
     log("Method", methodName, "not known");
-  };
+  }
+  return dispatch;
 }
 
 
