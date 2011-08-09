@@ -16,11 +16,7 @@ function log() {
 }
 
 
-function xMethods() {
-  //instance variables go here
-  var x;
-
-  //methods go here
+function xMethods(x) {
   return function (methodName) {
     switch (methodName) {
     case 'x=':
@@ -35,9 +31,7 @@ function xMethods() {
   };
 }
 
-function yMethods() {
-  var y;
-
+function yMethods(y) {
   return function (methodName) {
     switch (methodName) {
     case 'y=':
@@ -52,8 +46,8 @@ function yMethods() {
   };
 }
 
-function objMaker(methodsInitializer, superObject) {
-  var methods = methodsInitializer();
+function objMaker(methodsInitializer, initArgs, superObject) {
+  var methods = apply(methodsInitializer, initArgs);
 
   return function (methodName) {
     var args = callSlice(arguments, 1);
@@ -68,10 +62,12 @@ function objMaker(methodsInitializer, superObject) {
   };
 }
 
-xObj = objMaker(xMethods);
-yObj = objMaker(yMethods);
+yObj = objMaker(yMethods, [100]); //initialize y with 100
+xAndYObj = objMaker(xMethods, [5], yObj); //initialize x with 5
 
-xAndYObj = objMaker(xMethods, yObj);
+log(xAndYObj('x'));
+log(xAndYObj('y'));
+
 xAndYObj('x=', 25);
 xAndYObj('y=', 30);
 log(xAndYObj('x'));
