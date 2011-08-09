@@ -9,6 +9,7 @@ function apply(method, args) {
 }
 
 function applyWithSelf(method, self, args) {
+  args = callSlice(args, 0);
   args.unshift(self); //make self first argument
   return apply(method, args);
 }
@@ -33,6 +34,10 @@ function animalMethods(type) {
       return function () {
         return 'This animal is a ' +  type;
       };
+    case 'typeAndName':
+      return function (self) {
+        return self('introduce')() + ' and I am a ' + type;
+      };
     }
   };
 }
@@ -43,9 +48,9 @@ function dogMethods(name) {
     switch (methodName) {
     case 'bark':
       return function (self) {
-        return self('name')() + ' and I say WOOF WOOF';
+        return self('introduce')() + ' and I say WOOF WOOF';
       };
-    case 'name':
+    case 'introduce':
       return function () {
         return 'My name is ' + name;
       };
@@ -63,7 +68,7 @@ function yappyDogMethods() {
     switch (methodName) {
     case 'bark':
       return function (self) {
-        return self('name')() + ' and I say yip yip yip!';
+        return self('introduce')() + ' and I say yip yip yip!';
       };
     }
   };
@@ -77,18 +82,19 @@ function yappyDogMethods() {
 function objMaker(methodsInitializer, initArgs, superObject) {
   var methods = apply(methodsInitializer, initArgs);
 
-  function dispatch(methodName) {
+  function dispatch(methodName, self) {
+    self = self || dispatch; //if self given use it, otherwise use this function
     var dispatchArguments = arguments;
-    var args = callSlice(arguments, 1);
     var method = methods(methodName);
     if (method) {
       return function () {
-        return applyWithSelf(method, dispatch, args);
+        return applyWithSelf(method, self, arguments);
       };
     }
     if (superObject) { //re-call with superObject (this can happen recursively)
       return function () {
-        return apply(superObject, dispatchArguments)();
+        //when calling super, make sure self is set to the method receiver
+        return superObject(methodName, self)();
       }
     }
     log("Method", methodName, "not known");
@@ -115,3 +121,4 @@ log(fido('bark')());
 log(yapper('bark')());
 log(yapper('type')());
 log(fido('sayHello')('Dave'));
+log(fido('typeAndName')());
