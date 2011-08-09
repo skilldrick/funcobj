@@ -80,9 +80,19 @@ function objMaker(methodsInitializer, initArgs, superObject) {
 }
 
 
-var dog = objMaker(animalMethods, ['dog']);
-var fido = objMaker(dogMethods, ['fido'], dog);
-var yappyFido = objMaker(yappyDogMethods, [], fido);
+
+function dogMaker(name) {
+  var animal = objMaker(animalMethods, ['dog']);
+  return objMaker(dogMethods, [name], animal);
+}
+
+function yappyDogMaker(name) {
+  var dog = dogMaker(name);
+  return objMaker(yappyDogMethods, [], dog);
+}
+
+var fido = dogMaker('Fido');
+var yapper = yappyDogMaker('Yapper');
 
 log(fido('bark'));
-log(yappyFido('bark'));
+log(yapper('bark'));
