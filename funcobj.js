@@ -48,6 +48,10 @@ function dogMethods(name) {
       return function () {
         return 'My name is ' + name;
       };
+    case 'sayHello':
+      return function (self, otherName) {
+        return 'Hello, ' + otherName;
+      }
     }
   };
 }
@@ -77,7 +81,7 @@ function objMaker(methodsInitializer, initArgs, superObject) {
     if (method) {
       return applyWithSelf(method, dispatch, args);
     }
-    if (superObject) {
+    if (superObject) { //re-call with superObject (this can happen recursively)
       return apply(superObject, arguments);
     }
     log("Method", methodName, "not known");
@@ -102,3 +106,5 @@ var yapper = yappyDogMaker('Yapper');
 
 log(fido('bark'));
 log(yapper('bark'));
+log(yapper('type'));
+log(fido('sayHello', 'Dave'));
