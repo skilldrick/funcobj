@@ -94,7 +94,7 @@ function objMaker(methodsInitializer, initArgs, superObject) {
     if (superObject) { //re-call with superObject (this can happen recursively)
       return function () {
         //when calling super, make sure self is set to the method receiver
-        return superObject(methodName, self)();
+        return apply(superObject(methodName, self), arguments);
       }
     }
     log("Method", methodName, "not known");
@@ -123,3 +123,4 @@ log(yapper('type')());
 log(fido('sayHello')('Dave'));
 log(fido('typeAndName')());
 log(yapper('typeAndName')());
+log(yapper('sayHello')('Bob'));
