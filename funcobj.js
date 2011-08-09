@@ -16,7 +16,7 @@ function log() {
 }
 
 
-var xMethods = (function () {
+function xMethods() {
   //instance variables go here
   var x;
 
@@ -33,9 +33,9 @@ var xMethods = (function () {
       };
     }
   };
-})();
+}
 
-var yMethods = (function () {
+function yMethods() {
   var y;
 
   return function (methodName) {
@@ -50,10 +50,11 @@ var yMethods = (function () {
       }
     }
   };
-})();
+}
 
-function objMaker(methods, superObject) {
-  var allMethods = [];
+function objMaker(methodsInitializer, superObject) {
+  var methods = methodsInitializer();
+
   return function (methodName) {
     var args = callSlice(arguments, 1);
     var method = methods(methodName);
