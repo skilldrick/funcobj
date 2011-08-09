@@ -2,36 +2,71 @@ function callSlice(array, argument) {
   return Array.prototype.slice.call(array, argument);
 }
 
+function apply(method, args) {
+  return method.apply(null, args);
+}
+
 function log() {
   var args = Array.prototype.slice.call(arguments);
   console.log(args);
 }
 
 
-function objMaker () {
+var xMethods = (function () {
+  //instance variables go here
   var x;
 
-  return function (method) {
-    var args = callSlice(arguments, 1);
-    switch (method) {
-    case 'setX':
-      (function () {
-        x = args[0];
-      })();
-      break;
-    case 'getX':
-      return (function () {
+  //methods go here
+  return function (methodName) {
+    switch (methodName) {
+    case 'x=':
+      return function (newX) {
+        x = newX;
+      };
+    case 'x':
+      return function () {
         return x;
-      })();
-      break;
-    default:
-      (function () {
-        log("Method", method, "not known");
-      })();
+      };
+    }
+  };
+})();
+
+var yMethods = (function () {
+  var y;
+
+  return function (methodName) {
+    switch (methodName) {
+    case 'y=':
+      return function (newY) {
+        y = newY;
+      };
+    case 'y':
+      return function () {
+        return y;
+      }
+    }
+  };
+})();
+
+function objMaker(methods) {
+  return function (methodName) {
+    var args = callSlice(arguments, 1);
+    var method = methods(methodName);
+    if (method) {
+      return apply(method, args);
+    }
+    else {
+      log("Method", methodName, "not known");
     }
   };
 }
 
-obj = objMaker();
-obj('setX', 100);
-log(obj('getX'));
+xObj = objMaker(xMethods);
+xObj('x=', 100);
+var x = xObj('x');
+log(x);
+
+yObj = objMaker(yMethods);
+yObj('y=', 50);
+var y = yObj('y');
+log(y);
