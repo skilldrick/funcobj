@@ -1,3 +1,5 @@
+//Keep all those horrible object methods stashed away - this will eventually go
+//into a separate file so you don't have to see a single dot.
 function callSlice(array, argument) {
   return Array.prototype.slice.call(array, argument);
 }
@@ -16,36 +18,51 @@ function log() {
 }
 
 
-function xMethods(x) {
+
+
+
+function animalMethods(type) {
   return function (methodName) {
     switch (methodName) {
-    case 'x=':
-      return function (newX) {
-        x = newX;
-      };
-    case 'x':
+    case 'type':
       return function () {
-        return x;
+        return 'This animal is a ' +  type;
       };
     }
   };
 }
 
-function yMethods(y) {
+function dogMethods(name) {
   return function (methodName) {
     switch (methodName) {
-    case 'y=':
-      return function (newY) {
-        y = newY;
-      };
-    case 'y':
+    case 'bark':
       return function () {
-        return y;
-      }
+        return 'WOOF WOOF';
+      };
+    case 'name':
+      return function () {
+        return 'My name is ' + name;
+      };
     }
   };
 }
 
+function yappyDogMethods() {
+  return function (methodName) {
+    switch (methodName) {
+    case 'bark':
+      return function () {
+        return 'yip yip yip!';
+      };
+    }
+  };
+}
+
+
+
+//methodsInitializer: a function that returns methods for the new object
+//initArgs: initialization arguments for the methodsInitializer
+//superObject: an optional object to inherit methods
 function objMaker(methodsInitializer, initArgs, superObject) {
   var methods = apply(methodsInitializer, initArgs);
 
@@ -62,13 +79,10 @@ function objMaker(methodsInitializer, initArgs, superObject) {
   };
 }
 
-yObj = objMaker(yMethods, [100]); //initialize y with 100
-xAndYObj = objMaker(xMethods, [5], yObj); //initialize x with 5
 
-log(xAndYObj('x'));
-log(xAndYObj('y'));
+var dog = objMaker(animalMethods, ['dog']);
+var fido = objMaker(dogMethods, ['fido'], dog);
+var yappyFido = objMaker(yappyDogMethods, [], fido);
 
-xAndYObj('x=', 25);
-xAndYObj('y=', 30);
-log(xAndYObj('x'));
-log(xAndYObj('y'));
+log(fido('bark'));
+log(yappyFido('bark'));
