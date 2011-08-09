@@ -39,10 +39,11 @@ function animalMethods(type) {
 
 function dogMethods(name) {
   return function (methodName) {
+    //dogMethods
     switch (methodName) {
     case 'bark':
       return function (self) {
-        return self('name') + ' and I say WOOF WOOF';
+        return self('name')() + ' and I say WOOF WOOF';
       };
     case 'name':
       return function () {
@@ -58,10 +59,11 @@ function dogMethods(name) {
 
 function yappyDogMethods() {
   return function (methodName) {
+    //yappyDogMethods
     switch (methodName) {
     case 'bark':
       return function (self) {
-        return self('name') + ' and I say yip yip yip!';
+        return self('name')() + ' and I say yip yip yip!';
       };
     }
   };
@@ -76,13 +78,18 @@ function objMaker(methodsInitializer, initArgs, superObject) {
   var methods = apply(methodsInitializer, initArgs);
 
   function dispatch(methodName) {
+    var dispatchArguments = arguments;
     var args = callSlice(arguments, 1);
     var method = methods(methodName);
     if (method) {
-      return applyWithSelf(method, dispatch, args);
+      return function () {
+        return applyWithSelf(method, dispatch, args);
+      };
     }
     if (superObject) { //re-call with superObject (this can happen recursively)
-      return apply(superObject, arguments);
+      return function () {
+        return apply(superObject, dispatchArguments)();
+      }
     }
     log("Method", methodName, "not known");
   }
@@ -104,7 +111,7 @@ function yappyDogMaker(name) {
 var fido = dogMaker('Fido');
 var yapper = yappyDogMaker('Yapper');
 
-log(fido('bark'));
-log(yapper('bark'));
-log(yapper('type'));
-log(fido('sayHello', 'Dave'));
+log(fido('bark')());
+log(yapper('bark')());
+log(yapper('type')());
+log(fido('sayHello')('Dave'));
