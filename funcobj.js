@@ -48,7 +48,7 @@ function objMaker(methodsInitializer, initArgs, superObject) {
         return apply(superObject(methodName, self), arguments);
       }
     }
-    log("Method", methodName, "not known");
+    throw 'Method ' + methodName + ' not known';
   }
   return dispatch;
 }
