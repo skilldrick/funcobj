@@ -15,11 +15,13 @@ describe('objMaker', function () {
 
   describe('an object made with object maker', function () {
     function exampleMethods() {
+      function doSomething() {
+        return 'Did something';
+      }
+
       return function (methodName) {
         if (methodName == 'doSomething') {
-          return function () {
-            return 'Did something';
-          };
+          return doSomething;
         }
       }
     }
@@ -42,21 +44,25 @@ describe('objMaker', function () {
 
   describe('an object with inheritance', function () {
     function xMethods() {
+      function x() {
+        return 'This is X';
+      }
+
       return function (methodName) {
         if (methodName == 'x') {
-          return function () {
-            return 'This is X';
-          };
+          return x;
         }
       }
     }
 
     function yMethods() {
+      function y() {
+        return 'This is Y';
+      }
+
       return function (methodName) {
         if (methodName == 'y') {
-          return function () {
-            return 'This is Y';
-          };
+          return y;
         }
       }
     }
@@ -77,26 +83,32 @@ describe('objMaker', function () {
 
   describe('a method on a superobject', function () {
     function personMethods(name) {
+      function getName() {
+        return name;
+      }
+
+      function greet(self) {
+        return 'Hello, my name is ' + self('name')();
+      }
+
       return function (methodName) {
         if (methodName == 'name') {
-          return function () {
-            return name;
-          };
+          return getName;
         }
         else if (methodName == 'greet') {
-          return function (self) {
-            return 'Hello, my name is ' + self('name')();
-          }
+          return greet;
         }
       }
     }
 
     function happyPersonMethods(name) {
+      function getName() {
+        return name + '!!!';
+      }
+
       return function (methodName) {
         if (methodName == 'name') {
-          return function () {
-            return name + '!!!';
-          };
+          return getName;
         }
       }
     }
@@ -114,21 +126,25 @@ describe('objMaker', function () {
 
   describe('an overridden method', function () {
     function personMethods(name) {
+      function getName() {
+        return name;
+      }
+
       return function (methodName) {
         if (methodName == 'name') {
-          return function () {
-            return name;
-          };
+          return getName;
         }
       }
     }
 
     function happyPersonMethods(name) {
+      function getName() {
+        return name + '!!!';
+      }
+
       return function (methodName) {
         if (methodName == 'name') {
-          return function () {
-            return name + '!!!';
-          };
+          return getName;
         }
       }
     }
