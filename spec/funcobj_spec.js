@@ -75,7 +75,7 @@ describe('objMaker', function () {
     });
   });
 
-  describe('calling a method on a subobject from super', function () {
+  describe('a method on a superobject', function () {
     function personMethods(name) {
       return function (methodName) {
         if (methodName == 'name') {
@@ -109,6 +109,38 @@ describe('objMaker', function () {
     it('should call an overridden method defined on subobject', function () {
       expect(this.dave('greet')()).toEqual('Hello, my name is Dave');
       expect(this.happyDave('greet')()).toEqual('Hello, my name is Dave!!!');
+    });
+  });
+
+  describe('an overridden method', function () {
+    function personMethods(name) {
+      return function (methodName) {
+        if (methodName == 'name') {
+          return function () {
+            return name;
+          };
+        }
+      }
+    }
+
+    function happyPersonMethods(name) {
+      return function (methodName) {
+        if (methodName == 'name') {
+          return function () {
+            return name + '!!!';
+          };
+        }
+      }
+    }
+
+    beforeEach(function () {
+      this.dave = objMaker(personMethods, ['Dave']);
+      this.happyDave = objMaker(happyPersonMethods, ['Dave'], this.dave);
+    });
+
+    it('should be able to call a method on super', function () {
+      expect(this.happyDave('name')()).toEqual('Dave!!!');
+      expect(this.happyDave('name', true)()).toEqual('Dave');
     });
   });
 });

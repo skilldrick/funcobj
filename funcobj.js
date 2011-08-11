@@ -33,19 +33,20 @@ function log() {
 function objMaker(methodsInitializer, initArgs, superObject) {
   var methods = apply(methodsInitializer, initArgs);
 
-  function dispatch(methodName, self) {
+  function dispatch(methodName, callSuper, self) {
     self = self || dispatch; //if self given use it, otherwise use this function
-    var dispatchArguments = arguments;
-    var method = methods(methodName);
-    if (method) {
-      return function () {
-        return applyWithSelf(method, self, arguments);
-      };
+    if (!callSuper) {
+      var method = methods(methodName);
+      if (method) {
+        return function () {
+          return applyWithSelf(method, self, arguments);
+        };
+      }
     }
     if (superObject) { //re-call with superObject (this can happen recursively)
       return function () {
         //when calling super, make sure self is set to the method receiver
-        return apply(superObject(methodName, self), arguments);
+        return apply(superObject(methodName, false, self), arguments);
       }
     }
     throw 'Method ' + methodName + ' not known';
