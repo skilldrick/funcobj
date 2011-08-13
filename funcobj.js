@@ -25,8 +25,6 @@ function log() {
 
 
 
-
-
 //methodsInitializer: a function that returns methods for the new object
 //initArgs: initialization arguments for the methodsInitializer
 //superObject: an optional object to inherit methods
@@ -51,7 +49,6 @@ function objMaker(methodsInitializer, initArgs, superObject) {
     }
     throw 'Method ' + methodName + ' not known';
   }
+
   return dispatch;
 }
-
-

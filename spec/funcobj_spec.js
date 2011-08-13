@@ -13,6 +13,8 @@ describe('objMaker', function () {
     });
   });
 
+
+
   describe('an object made with object maker', function () {
     function exampleMethods() {
       function doSomething() {
@@ -41,6 +43,8 @@ describe('objMaker', function () {
       }).toThrow('Method doSomethingUnknown not known');
     });
   });
+
+
 
   describe('an object with inheritance', function () {
     function xMethods() {
@@ -80,6 +84,8 @@ describe('objMaker', function () {
       expect(this.y('y')()).toEqual('This is Y');
     });
   });
+
+
 
   describe('a method on a superobject', function () {
     function personMethods(name) {
@@ -123,6 +129,8 @@ describe('objMaker', function () {
       expect(this.happyDave('greet')()).toEqual('Hello, my name is Dave!!!');
     });
   });
+
+
 
   describe('an overridden method', function () {
     function personMethods(name) {
