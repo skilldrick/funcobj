@@ -167,4 +167,36 @@ describe('objMaker', function () {
       expect(this.happyDave('name', true)()).toEqual('Dave');
     });
   });
+
+  describe('an object with a getter and a setter', function () {
+    function methods(name) {
+      function getName() {
+        return name;
+      }
+
+      function setName(self, newName) {
+        name = newName;
+      }
+
+      return function (methodName) {
+        switch (methodName) {
+        case 'name':
+          return getName;
+        case 'name=':
+          return setName;
+        }
+      };
+    }
+
+    it('can get the original value', function () {
+      var dave = objMaker(methods, ['Dave']);
+      expect(dave('name')()).toEqual('Dave');
+    });
+
+    it('can set a new value', function () {
+      var dave = objMaker(methods, ['Dave']);
+      dave('name=')('David');
+      expect(dave('name')()).toEqual('David');
+    });
+  });
 });
